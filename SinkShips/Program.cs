@@ -2,14 +2,145 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SinkShips
 {
-	class Program
-	{
-		static void Main(string[] args)
-		{
-		}
-	}
+    class Program
+    {
+        static int numberOfBoats;
+
+        static void Main(string[] args)
+        {
+            int lifeCount = 5;
+            string[,] playingField = CreatePlayingField();
+            int[,] boatField = CreateBoatArray(AskForDifficulty());
+            WritePlayingField(playingField);
+            TellMeNumberOfBoats();
+
+            while (lifeCount > 0)
+            {
+                
+                int[] userGuess = AskForCoordinates();
+                bool isHit = IsHit(boatField, userGuess);
+                playingField = UpdatePlayingField(playingField, userGuess, isHit);
+                WritePlayingField(playingField);
+                if (isHit == false)
+                    lifeCount--;
+            }
+        }
+
+        private static string[,] UpdatePlayingField(string[,] playingField, int[] userGuess, bool isHit)
+        {
+            int x = userGuess[0];
+            int y = userGuess[1];
+            playingField[x, y] = (isHit ? " X " : " O ");
+            return playingField;
+        }
+
+        private static bool IsHit(int[,] boatField, int[] userGuess)
+        {
+            //Gör om userGuess till två ints "X" och "Y"
+            bool hit;
+            int x = userGuess[0];
+            int y = userGuess[1];
+            hit = (boatField[x, y] == 1 ? true : false);
+            return hit;
+            //    hit = true;
+            //else
+            //    hit = false;
+            //return hit;
+        }
+
+        private static int[] AskForCoordinates()
+        {
+            bool loop = true;
+            int[] coordinates = new int[2];
+            do
+            {
+                Console.Write("Skriv in koordinaterna du vill bombardera(exempelvis 1.1): ");
+                string[] answer = Console.ReadLine().Split('.');
+                if (IsValidInput(answer))
+                {
+                    coordinates = new int[] { int.Parse(Convert.ToString(answer[0])), int.Parse(Convert.ToString(answer[1])) };
+                    loop = false;
+                }
+            } while (loop == true);
+            return coordinates;
+
+        }
+        static bool IsValidInput(string[] input)
+        {
+            bool validInput = false;
+            if ((Regex.IsMatch(input[0], @"^[0-3]+$")) && (Regex.IsMatch(input[1], @"^[0-3]+$")))
+                validInput = true;
+            return validInput;
+        }
+        
+
+        private static int[,] CreateBoatArray(int difficulty)
+        {
+            Random randomNumberGenerator = new Random();
+            //int[,] boatPlaces = new int[4, 4] { { 1, 0, 1, 0 }, { 0, 0, 1, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 0 } };
+            int[,] boatPlaces = new int[4, 4];
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if (randomNumberGenerator.Next(0, difficulty*4) < 3)
+                    {
+                        boatPlaces[i, j] = 1;
+                        numberOfBoats++;
+                    }
+                    else
+                    {
+                        boatPlaces[i, j] = 0;
+                    }
+                }
+                Console.WriteLine(); ;
+            }
+            return boatPlaces;
+        }
+
+        private static void WritePlayingField(string[,] playingField)
+        {
+            Console.Clear();
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    Console.Write(playingField[i,j]);
+                }
+                Console.WriteLine(); ;
+            }
+            
+        }
+
+        private static string[,] CreatePlayingField()
+        {
+            string[,] playingField = new string[4, 4] {{" - "," - "," - "," - "},{" - "," - "," - "," - "},{" - "," - "," - "," - "}, { " - ", " - ", " - ", " - " } };
+            return playingField;
+        }
+        static void TellMeNumberOfBoats()
+        {
+
+            Console.WriteLine($"Du ska träffa {numberOfBoats} båtar");
+        }
+        static int AskForDifficulty()
+        {
+            string input;
+            bool loop = true;
+            do
+            {
+                Console.WriteLine("Välj svårighetsgrad: (1)Jättelätt, (2)vanligt, (3)skitsvårt");
+                input = Console.ReadLine();
+                if (Regex.IsMatch(input, @"^[0-3]+$"))
+                    loop = false;
+            } while (loop == true);
+            
+            return int.Parse(input);
+        }
+        
+    }
 }
