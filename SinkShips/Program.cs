@@ -29,6 +29,7 @@ namespace SinkShips
                 if (isHit == false)
                     lifeCount--; // todo: vore bra att veta hur många missar man har kvar
             }
+            //todo: Man kan ju för bövelen inte vinna!
         }
 
         private static string[,] UpdatePlayingField(string[,] playingField, int[] userGuess, bool isHit)
@@ -55,6 +56,7 @@ namespace SinkShips
 
         private static int[] AskForCoordinates()
         {
+            // good: robust
             bool loop = true;
             int[] coordinates = new int[2];
             do
@@ -73,7 +75,7 @@ namespace SinkShips
         static bool IsValidInput(string[] input)
         {
             bool validInput = false;
-            if ((Regex.IsMatch(input[0], @"^[0-3]+$")) && (Regex.IsMatch(input[1], @"^[0-3]+$")))
+            if ((Regex.IsMatch(input[0], @"^[0-3]+$")) && (Regex.IsMatch(input[1], @"^[0-3]+$"))) // todo: plustecknet skall bort (se kommentar i välja svårighetsgradens metod)
                 validInput = true;
             return validInput;
         }
@@ -81,6 +83,7 @@ namespace SinkShips
 
         private static int[,] CreateBoatArray(int difficulty)
         {
+            // good: väldigt smidigt sätt att slumpa fram båtar på
             Random randomNumberGenerator = new Random();
             //int[,] boatPlaces = new int[4, 4] { { 1, 0, 1, 0 }, { 0, 0, 1, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 0 } };
             int[,] boatPlaces = new int[4, 4];
@@ -105,6 +108,7 @@ namespace SinkShips
 
         private static void WritePlayingField(string[,] playingField)
         {
+            //good: Effektiv metod för att skriva ut och lagra båt och träff
             // todo: det vore bra att se rutornas koordinater i listen
             Console.Clear();
             for (int i = 0; i < 4; i++)
@@ -127,7 +131,7 @@ namespace SinkShips
         }
         static void TellMeNumberOfBoats()
         {
-
+            // good: detta är bra info att ha innan spelet börjar
             Console.WriteLine($"Du ska träffa {numberOfBoats} båtar");
         }
         static int AskForDifficulty()
@@ -138,8 +142,10 @@ namespace SinkShips
             {
                 Console.WriteLine("Välj svårighetsgrad: (1)Jättelätt, (2)vanligt, (3)skitsvårt");
                 input = Console.ReadLine();
-                if (Regex.IsMatch(input, @"^[0-3]+$"))
+                if (Regex.IsMatch(input, @"^[0-3]+$")) // todo: tag ut plustecknet. Det gör att minst en siffra skall vara 0-3; man kan alltså skriva tex 12
                     loop = false;
+
+                // todo: man kan välja noll och detta är ett trivialt fall
             } while (loop == true);
             
             return int.Parse(input);
