@@ -14,20 +14,20 @@ namespace SinkShips
         static void Main(string[] args)
         {
             int lifeCount = 5;
-            string[,] playingField = CreatePlayingField();
-            int[,] boatField = CreateBoatArray(AskForDifficulty());
-            WritePlayingField(playingField);
-            TellMeNumberOfBoats();
+            string[,] playingField = CreatePlayingField(); //skapar spelplan
+            int[,] boatField = CreateBoatArray(AskForDifficulty()); // sätter båtar
+            WritePlayingField(playingField); // skriver ut spelplanen
+            TellMeNumberOfBoats();  // skriver hur många båtar det finns
 
             while (lifeCount > 0)
             {
                 
                 int[] userGuess = AskForCoordinates();
-                bool isHit = IsHit(boatField, userGuess);
+                bool isHit = IsHit(boatField, userGuess); //returnerar sant om träff
                 playingField = UpdatePlayingField(playingField, userGuess, isHit);
                 WritePlayingField(playingField);
                 if (isHit == false)
-                    lifeCount--;
+                    lifeCount--; // todo: vore bra att veta hur många missar man har kvar
             }
         }
 
@@ -105,6 +105,7 @@ namespace SinkShips
 
         private static void WritePlayingField(string[,] playingField)
         {
+            // todo: det vore bra att se rutornas koordinater i listen
             Console.Clear();
             for (int i = 0; i < 4; i++)
             {
@@ -119,8 +120,10 @@ namespace SinkShips
 
         private static string[,] CreatePlayingField()
         {
+            // todo: man kan välja storlek på spelfält
             string[,] playingField = new string[4, 4] {{" - "," - "," - "," - "},{" - "," - "," - "," - "},{" - "," - "," - "," - "}, { " - ", " - ", " - ", " - " } };
             return playingField;
+            
         }
         static void TellMeNumberOfBoats()
         {
